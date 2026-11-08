@@ -1,4 +1,4 @@
-#include "cs15_malloc.h"
+#include "simple_malloc.h"
 
 void* freeList = NULL;
 void* topChunk = NULL;
@@ -39,7 +39,7 @@ struct chunkresult freeListHelper(void* ptr) {
 }
 
 
-void* cs15_malloc(size_t size) {
+void* simple_malloc(size_t size) {
 	
 	size_t rounded_size = (size + 7) & ~(size_t)7; // round up to 8 bytes
 	if (rounded_size == 0) { rounded_size = 8; }
@@ -126,7 +126,7 @@ void* cs15_malloc(size_t size) {
 	return result_ptr;
 }
 
-void cs15_free(void * freeptr) {
+void simple_free(void * freeptr) {
 	
 	if(freeptr == NULL) { return; }
 	
@@ -255,14 +255,14 @@ void cs15_free(void * freeptr) {
 }
 
 
-void* cs15_realloc(void* ptr, size_t size) {
-	if (ptr == NULL) { return cs15_malloc(size); }
+void* simple_realloc(void* ptr, size_t size) {
+	if (ptr == NULL) { return simple_malloc(size); }
 	if (size <= 0 ) {
-		cs15_free(ptr);
+		simple_free(ptr);
 		return NULL;
 	}
 
-	void* temp_alloc = cs15_malloc(size);
+	void* temp_alloc = simple_malloc(size);
 	if (temp_alloc == NULL) {return NULL;}
 	size_t curr_size = *(size_t*)((char*)ptr - 24); // go to header
 	size_t bytes_to_copy = (curr_size < size) ? curr_size : size;
@@ -274,7 +274,7 @@ void* cs15_realloc(void* ptr, size_t size) {
 		dest[i] = src[i];
 	}
 
-	cs15_free(ptr);
+	simple_free(ptr);
 	return temp_alloc;
 }
 
